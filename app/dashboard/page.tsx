@@ -24,7 +24,16 @@ import {
   Clock,
   TrendingUp,
   Users,
-  Eye as EyeIcon
+  Eye as EyeIcon,
+  BookOpen,
+  Sparkles,
+  PieChart,
+  BarChart3,
+  ListChecks,
+  Circle,
+  UserCircle,
+  Settings,
+  HelpCircle
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -176,7 +185,9 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     if (confirm('Yakin mau logout?')) {
-      router.push('/');
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      router.push('/login');
     }
   };
 
@@ -358,6 +369,15 @@ export default function Dashboard() {
             {sidebarOpen && <span className="font-medium">Buat Artikel</span>}
           </button>
 
+          {/* PROFILE */}
+          <Link
+            href="/dashboard/profile"
+            className="flex items-center space-x-3 px-4 py-2.5 rounded-lg transition text-gray-600 hover:bg-gray-100"
+          >
+            <UserCircle className="w-5 h-5 flex-shrink-0" />
+            {sidebarOpen && <span className="font-medium">Profile</span>}
+          </Link>
+
           {/* LIHAT BLOG */}
           <Link
             href="/"
@@ -386,7 +406,17 @@ export default function Dashboard() {
           <div className="px-6 py-4 flex justify-between items-center">
             <div className="flex items-center space-x-4">
               <h1 className="text-xl font-bold text-gray-800">
-                {showForm && activeTab === 'new' ? '✏️ Buat Artikel' : '📊 Dashboard'}
+                {showForm && activeTab === 'new' ? (
+                  <span className="flex items-center space-x-2">
+                    <PenLine className="w-5 h-5" />
+                    <span>Buat Artikel</span>
+                  </span>
+                ) : (
+                  <span className="flex items-center space-x-2">
+                    <LayoutDashboard className="w-5 h-5" />
+                    <span>Dashboard</span>
+                  </span>
+                )}
               </h1>
               <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
                 {showForm && activeTab === 'new' ? 'Form Editor' : 'Admin Panel'}
@@ -431,7 +461,17 @@ export default function Dashboard() {
             <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold text-gray-800">
-                  {editingId ? '✏️ Edit Artikel' : '📝 Buat Artikel Baru'}
+                  {editingId ? (
+                    <span className="flex items-center space-x-2">
+                      <Edit className="w-5 h-5" />
+                      <span>Edit Artikel</span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center space-x-2">
+                      <Plus className="w-5 h-5" />
+                      <span>Buat Artikel Baru</span>
+                    </span>
+                  )}
                 </h3>
                 <button
                   onClick={closeForm}
@@ -446,7 +486,7 @@ export default function Dashboard() {
                 <div className="grid md:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                      Judul Artikel *
+                      Judul Artikel <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -459,7 +499,7 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                      Slug (URL) *
+                      Slug (URL) <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -501,7 +541,7 @@ export default function Dashboard() {
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                    Konten Artikel *
+                    Konten Artikel <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     required
@@ -519,9 +559,10 @@ export default function Dashboard() {
                 <div className="flex space-x-3">
                   <button
                     type="submit"
-                    className="bg-navy-700 text-white px-8 py-2.5 rounded-lg font-semibold hover:bg-navy-800 transition"
+                    className="bg-navy-700 text-white px-8 py-2.5 rounded-lg font-semibold hover:bg-navy-800 transition flex items-center space-x-2"
                   >
-                    {editingId ? 'Update Artikel' : 'Publish Artikel'}
+                    <CheckCircle className="w-4 h-4" />
+                    <span>{editingId ? 'Update Artikel' : 'Publish Artikel'}</span>
                   </button>
                   <button
                     type="button"
@@ -608,11 +649,14 @@ export default function Dashboard() {
                 <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-gray-800">📈 Tren Artikel</h3>
+                      <h3 className="text-lg font-bold text-gray-800 flex items-center space-x-2">
+                        <TrendingUp className="w-5 h-5" />
+                        <span>Tren Artikel</span>
+                      </h3>
                       <p className="text-sm text-gray-400">Perkembangan jumlah artikel per bulan</p>
                     </div>
                     <div className="bg-gray-100 p-2 rounded-lg">
-                      <TrendingUp className="w-5 h-5 text-gray-600" />
+                      <BarChart3 className="w-5 h-5 text-gray-600" />
                     </div>
                   </div>
                   <div className="h-64">
@@ -623,11 +667,14 @@ export default function Dashboard() {
                 <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-gray-800">📊 Status Artikel</h3>
+                      <h3 className="text-lg font-bold text-gray-800 flex items-center space-x-2">
+                        <PieChart className="w-5 h-5" />
+                        <span>Status Artikel</span>
+                      </h3>
                       <p className="text-sm text-gray-400">Distribusi status artikel</p>
                     </div>
                     <div className="bg-gray-100 p-2 rounded-lg">
-                      <CheckCircle className="w-5 h-5 text-gray-600" />
+                      <ListChecks className="w-5 h-5 text-gray-600" />
                     </div>
                   </div>
                   <div className="h-64 flex items-center justify-center">
@@ -639,7 +686,10 @@ export default function Dashboard() {
               <div className="mt-6 bg-white rounded-xl shadow-sm p-6 border border-gray-200">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="text-lg font-bold text-gray-800">📊 Kategori Artikel</h3>
+                    <h3 className="text-lg font-bold text-gray-800 flex items-center space-x-2">
+                      <BarChart3 className="w-5 h-5" />
+                      <span>Kategori Artikel</span>
+                    </h3>
                     <p className="text-sm text-gray-400">Distribusi artikel per kategori</p>
                   </div>
                   <div className="bg-gray-100 p-2 rounded-lg">
@@ -657,7 +707,10 @@ export default function Dashboard() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="p-6 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>
-                    <h3 className="text-lg font-bold text-gray-800">📚 Daftar Artikel</h3>
+                    <h3 className="text-lg font-bold text-gray-800 flex items-center space-x-2">
+                      <BookOpen className="w-5 h-5" />
+                      <span>Daftar Artikel</span>
+                    </h3>
                     <p className="text-sm text-gray-400">Kelola semua artikel di blog-mu</p>
                   </div>
                   <button
@@ -680,7 +733,8 @@ export default function Dashboard() {
                       onClick={openCreateForm}
                       className="mt-4 bg-navy-700 text-white px-6 py-2 rounded-lg hover:bg-navy-800 transition"
                     >
-                      ✏️ Buat Artikel
+                      <Plus className="w-4 h-4 inline mr-2" />
+                      Buat Artikel
                     </button>
                   </div>
                 ) : (
@@ -688,10 +742,30 @@ export default function Dashboard() {
                     <table className="w-full">
                       <thead className="bg-gray-50 border-b border-gray-200">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Judul</th>
-                          <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">Tanggal</th>
-                          <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">Status</th>
-                          <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <span className="flex items-center space-x-1">
+                              <FileText className="w-3 h-3" />
+                              <span>Judul</span>
+                            </span>
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden md:table-cell">
+                            <span className="flex items-center space-x-1">
+                              <Calendar className="w-3 h-3" />
+                              <span>Tanggal</span>
+                            </span>
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider hidden lg:table-cell">
+                            <span className="flex items-center space-x-1">
+                              <CheckCircle className="w-3 h-3" />
+                              <span>Status</span>
+                            </span>
+                          </th>
+                          <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                            <span className="flex items-center justify-end space-x-1">
+                              <Settings className="w-3 h-3" />
+                              <span>Aksi</span>
+                            </span>
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100">
@@ -719,7 +793,7 @@ export default function Dashboard() {
                             </td>
                             <td className="px-6 py-4 hidden lg:table-cell">
                               <span className="inline-flex items-center space-x-1 bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
-                                <CheckCircle className="w-3 h-3" />
+                                <Circle className="w-2 h-2 fill-green-500" />
                                 <span>Published</span>
                               </span>
                             </td>
