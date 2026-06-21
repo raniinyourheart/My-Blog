@@ -30,18 +30,16 @@ const JWT_SECRET = 'rahasia_kamu_12345';
 
 // ===== AUTH ROUTES =====
 
-// REGISTER (buat daftar akun baru)
+// REGISTER
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { username, password, full_name, email } = req.body;
     
-    // Cek username sudah ada
     const [existing] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
     if (existing.length > 0) {
       return res.status(400).json({ error: 'Username sudah digunakan' });
     }
     
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
     
     const [result] = await db.query(
@@ -63,21 +61,25 @@ app.post('/api/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     
-    // Cari user
+    console.log('🔐 Login attempt:', username);
+    
     const [users] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
+    
     if (users.length === 0) {
+      console.log('❌ User not found:', username);
       return res.status(401).json({ error: 'Username atau password salah' });
     }
     
     const user = users[0];
+    console.log('✅ User found:', username);
     
-    // Verifikasi password
     const validPassword = await bcrypt.compare(password, user.password);
+    console.log('🔑 Password valid:', validPassword);
+    
     if (!validPassword) {
       return res.status(401).json({ error: 'Username atau password salah' });
     }
     
-    // Buat JWT token
     const token = jwt.sign(
       { id: user.id, username: user.username },
       JWT_SECRET,
@@ -95,11 +97,12 @@ app.post('/api/auth/login', async (req, res) => {
       }
     });
   } catch (error) {
+    console.error('❌ Login error:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
-// GET PROFILE (pake token)
+// GET PROFILE
 app.get('/api/auth/profile', async (req, res) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
@@ -134,7 +137,6 @@ app.put('/api/auth/profile', async (req, res) => {
     let query = 'UPDATE users SET full_name = ?, email = ?, avatar = ?';
     const params = [full_name, email, avatar];
     
-    // Jika ada perubahan password
     if (newPassword && currentPassword) {
       const [users] = await db.query('SELECT password FROM users WHERE id = ?', [decoded.id]);
       const validPassword = await bcrypt.compare(currentPassword, users[0].password);
@@ -159,9 +161,7 @@ app.put('/api/auth/profile', async (req, res) => {
   }
 });
 
-// ... API Posts yang udah ada tetap di sini ...
-
-// ===== API POSTS (YANG UDAH ADA) =====
+// ===== API POSTS =====
 app.get('/api/posts', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM posts ORDER BY created_at DESC');
